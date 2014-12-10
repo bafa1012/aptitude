@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Aptitude Test</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<!-- I'm using JQuery 1.11.1 because the 2.x versions doesn't support older Browsers like IE 8 -->
+		<script language="javascript" type="text/javascript" src="lib/jquery.js"></script>
+		<script language="javascript" type="text/javascript" src="lib/jquery-ui.min.js"></script>
+		<script language="javascript" type="text/javascript" src="js/functions.js"></script>
+	</head>
+	<body>
+		<div id="top">
+			<div id="image"></div>
+			<div id="top-menu">
+				<div id="button1"></div>
+				<div id="button2"></div>
+				<div id="button3"></div>
+			</div>
+		</div>
+		<div id="bottom">
+			<div id="main-menu">
+				<div id="button4"></div>
+				<div id="button5"></div>
+				<div id="button6"></div>
+			</div>
+			<div id="content"></div>
+		</div>
+		<script type="text/javascript" charset="utf-8">
+			/*
+			 * Variables
+			 */
+			// the bottom div container
+			var bottom = $("#bottom");
+			// the bottom content container inside the bottom container
+			var content = $("#content");
+			// the minimum top value of bottom
+			var minbottomTop = $( window ).height() * 0.64;
+			// absolute top value of bottom
+			var absolutebottomTop = minbottomTop;
+			// absolutebottomTop, relative to window height
+			var relativeAbsolutebottomTop = absolutebottomTop / $( window ).height();
+			// minimum height of bottom
+			var bottomMinHeight = $( window ).height() - minbottomTop;
+			// height of bottom, relative to window height
+			var relativebottomHeight = (minbottomTop - absolutebottomTop) / $( window ).height();
+
+			// when the whole document is loaded
+			$(document).ready(function(){
+				positionElements();
+				resizebottom(0);
+				bottom.draggable({
+					axis: "y",
+					drag:
+						function (event,ui) {
+							// when position is too low, set it back to minimum value
+							if (ui.position.top > minbottomTop) {
+								ui.position.top = minbottomTop;
+							}
+							// when position is too high, set it back to 80% of window height
+							else if (ui.position.top < $( window ).height() * 0.2) {
+								ui.position.top = $( window ).height() * 0.2;
+							}
+							absolutebottomTop = ui.position.top;
+							relativeAbsolutebottomTop = absolutebottomTop / $( window ).height();
+							relativebottomHeight = (minbottomTop - absolutebottomTop) / $( window ).height();
+							resizebottom(relativebottomHeight);
+							moveImage(relativebottomHeight / 2);
+							topMenuTransparency();
+							mainMenuTransparency();
+						}
+				});
+			});
+			
+			// when the viewport size changes
+			$( window ).resize(function() {
+				// calculate the top position of the bottom div, based on its relative height
+				minbottomTop = $( window ).height() * 0.64;
+				absolutebottomTop = $( window ).height() * relativeAbsolutebottomTop;
+				bottomMinHeight = $( window ).height() - minbottomTop;
+				resizebottom(relativebottomHeight);
+				moveImage(relativebottomHeight / 2);
+				positionElements();
+			});
+		</script>
+	</body>
+</html>
